@@ -12,11 +12,22 @@
 ## アーキテクチャ（Mermaid）
 ```mermaid
 flowchart LR
-  Internet --> IGW --> ALB((Optional))
-  ALB --> EC2[EC2 app]
-  EC2 -->|3306| RDS[(RDS MySQL)]
-  EC2 -.->|GetParameter| SSM[(SSM Parameter Store)]
+  Internet(((Internet)))
+  IGW[Internet Gateway]
+  EC2[EC2 app]
+  RDS[(RDS MySQL)]
+  SSM[(SSM Parameter Store)]
+
+  Internet --> IGW --> EC2
+  EC2 -->|3306| RDS
+  EC2 -.->|GetParameter| SSM
+
   subgraph VPC
-    EC2
-    RDS
+    direction LR
+    subgraph Public_Subnet["Public Subnet"]
+      EC2
+    end
+    subgraph Private_Subnet["Private Subnet"]
+      RDS
+    end
   end
