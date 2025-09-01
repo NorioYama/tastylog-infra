@@ -2,7 +2,7 @@
 
 ポートフォリオ用の IaC。**VPC / EC2 (app) / RDS (MySQL) / SSM Parameter Store / IAM** を Terraform v1.6+ / AWS Provider v5 で構築。
 
-使用テキスト
+使用テキスト:
 udemy AWS と Terraformで実現するInfrastructure as Code
 
 
