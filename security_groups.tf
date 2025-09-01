@@ -1,5 +1,5 @@
 #----------------------
-# Security Group
+# Security Groups
 #----------------------
 resource "aws_security_group" "web_sg" {
   name        = "${var.project}-${var.environment}-web-sg"
