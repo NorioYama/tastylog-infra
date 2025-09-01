@@ -1,0 +1,7 @@
+aws_region     = "ap-northeast-1"
+project        = "tastylog"
+environment    = "dev"
+
+# RDS などの機密はダミー
+db_username    = "appuser"
+db_password    = "CHANGE_ME"

@@ -1,0 +1,22 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# 鍵/証明書
+*.pem
+*.key
+*.p12
+*.crt
+*.cer
+
+# その他
+.DS_Store
