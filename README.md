@@ -7,35 +7,50 @@ udemy AWS と Terraformで実現するInfrastructure as Code
 
 
 ## 構成
-- VPC: /16, Public/Private Subnet (1a)
-- EC2 (t3.micro): app 用。
-- RDS (MySQL 8.0):
-- SSM Parameter Store: 
-- IAM: EC2 Role に `AmazonSSMManagedInstanceCore` 等を付与
+VPC: /16, Public/Private Subnet（Publicは1a/1c）
+
+EC2 (t3.micro): app 用（:3000 を 0.0.0.0 で listen）
+
+RDS (MySQL 8.0)
+
+SSM Parameter Store
+
+IAM: EC2 Role に AmazonSSMManagedInstanceCore 等
+
+ALB (internet-facing): Listener :80 → Target Group :3000（EC2）
+
+Route53: dev-elb.terraform-test.jp の A(エイリアス) → ALB
 
 ## アーキテクチャ（Mermaid）
 ```mermaid
 flowchart LR
-  Internet(((Internet)))
-  IGW[Internet Gateway]
-  SSM[(SSM Parameter Store)]
+  Client[[Internet]]
+  Route53[Route53<br/>dev-elb.terraform-test.jp]
 
-  %% --- VPC / Single-AZ (1a) ---
   subgraph VPC
     direction TB
-    subgraph AZ1["AZ:(Single-AZ)"]
-      direction LR
-      subgraph Public_Subnet["Public Subnet 1a"]
-        EC2[EC2 app]
+    IGW[Internet Gateway]
+
+    subgraph Public_Subnets_1a_1c["Public Subnets 1a & 1c"]
+      ALB[ALB HTTP 80]
+    end
+
+    subgraph AZ1["AZ ap-northeast-1a (Single AZ)"]
+      direction TB
+      subgraph Public_1a["Public Subnet 1a"]
+        EC2[EC2 app :3000]
       end
-      subgraph Private_Subnet["Private Subnet 1a"]
+      subgraph Private_1a["Private Subnet 1a"]
         RDS[(RDS MySQL)]
       end
     end
+
+    SSM[(SSM Parameter Store)]
   end
 
-  %% --- Edges ---
-  Internet --> IGW
-  IGW -->  EC2
+  Client --> Route53
+  Route53 -. "A alias" .-> ALB
+  Client --> IGW --> ALB
+  ALB -->|80 to 3000| EC2
   EC2 -->|3306| RDS
   EC2 -.->|GetParameter| SSM
